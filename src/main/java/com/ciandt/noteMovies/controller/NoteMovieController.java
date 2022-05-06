@@ -22,7 +22,8 @@ import java.util.UUID;
 @RequestMapping("/note-movie")
 public class NoteMovieController {
 
-    final NoteMovieService noteMovieService;
+
+    private NoteMovieService noteMovieService;
 
 
     public NoteMovieController(NoteMovieService noteMovieService) {
