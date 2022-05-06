@@ -1,11 +1,11 @@
-package com.ciandt.noteMovies.dtos;
+package com.ciandt.noteMovies.requests;
 
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class NoteMoviesDto {
+public class NoteMoviesRequest {
 
     @NotBlank
     private String name;

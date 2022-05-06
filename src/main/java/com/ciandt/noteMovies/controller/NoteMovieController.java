@@ -1,9 +1,10 @@
 package com.ciandt.noteMovies.controller;
 
-import com.ciandt.noteMovies.dtos.NoteMoviesDto;
+import com.ciandt.noteMovies.requests.NoteMoviesRequest;
 import com.ciandt.noteMovies.models.NoteMovieModel;
 import com.ciandt.noteMovies.services.NoteMovieService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,19 +23,14 @@ import java.util.UUID;
 @RequestMapping("/note-movie")
 public class NoteMovieController {
 
-
+    @Autowired
     private NoteMovieService noteMovieService;
 
-
-    public NoteMovieController(NoteMovieService noteMovieService) {
-        this.noteMovieService = noteMovieService;
-    }
-
     @PostMapping
-    private ResponseEntity<Object> saveNoteMovie(@Valid NoteMoviesDto noteMoviesDto) {
+    private ResponseEntity<Object> saveNoteMovie(@Valid NoteMoviesRequest noteMoviesRequest) {
 
         var noteMovieModel = new NoteMovieModel();
-        BeanUtils.copyProperties(noteMoviesDto, noteMovieModel);
+        BeanUtils.copyProperties(noteMoviesRequest, noteMovieModel);
         noteMovieModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
         return ResponseEntity.status(HttpStatus.CREATED).body(noteMovieService.save(noteMovieModel));
 
@@ -70,7 +66,7 @@ public class NoteMovieController {
 
     @PutMapping
     private ResponseEntity<Object> updateNoteMovie(@PathVariable(value = "id") UUID id,
-                                                    @RequestBody @Valid NoteMoviesDto noteMoviesDto) {
+                                                    @RequestBody @Valid NoteMoviesRequest noteMoviesDto) {
 
         Optional<NoteMovieModel> noteMovieModelOptional = noteMovieService.findById(id);
         if (!noteMovieModelOptional.isPresent()) {
