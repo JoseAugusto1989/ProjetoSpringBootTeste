@@ -27,11 +27,7 @@ public class NoteMovieController {
     private NoteMovieService noteMovieService;
 
     @PostMapping
-    private ResponseEntity<Object> saveNoteMovie(@Valid NoteMoviesRequest noteMoviesRequest) {
-
-        var noteMovieModel = new NoteMovieModel();
-        BeanUtils.copyProperties(noteMoviesRequest, noteMovieModel);
-        noteMovieModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
+    private ResponseEntity<Object> saveNoteMovie(@Valid NoteMovieModel noteMovieModel) {
         return ResponseEntity.status(HttpStatus.CREATED).body(noteMovieService.save(noteMovieModel));
 
     }

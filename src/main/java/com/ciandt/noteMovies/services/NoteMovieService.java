@@ -2,11 +2,15 @@ package com.ciandt.noteMovies.services;
 
 import com.ciandt.noteMovies.models.NoteMovieModel;
 import com.ciandt.noteMovies.repositories.NoteMoviesRepository;
+import com.ciandt.noteMovies.requests.NoteMoviesRequest;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +24,9 @@ public class NoteMovieService {
     }
 
     public NoteMovieModel save(NoteMovieModel noteMovieModel) {
+        var noteMoviesRequest = new NoteMoviesRequest();
+        BeanUtils.copyProperties(noteMoviesRequest, noteMovieModel);
+        noteMovieModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
         return noteMoviesRepository.save(noteMovieModel);
     }
 
