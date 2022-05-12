@@ -2,8 +2,8 @@ package com.ciandt.noteMovies.controller;
 
 import com.ciandt.noteMovies.requests.NoteMoviesRequest;
 import com.ciandt.noteMovies.models.NoteMovieModel;
+import com.ciandt.noteMovies.responses.NoteMovieResponse;
 import com.ciandt.noteMovies.services.NoteMovieService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,17 +25,14 @@ public class NoteMovieController {
     private NoteMovieService noteMovieService;
 
     @PostMapping
-    private ResponseEntity<Object> saveNoteMovie(@Valid NoteMovieModel noteMovieModel) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(noteMovieService.save(noteMovieModel));
-
+    private ResponseEntity<NoteMovieResponse> saveNoteMovie(@Valid NoteMoviesRequest noteMoviesRequest, UUID id) {
+        return ResponseEntity.ok(noteMovieService.save(noteMoviesRequest, id));
     }
 
     @GetMapping
     private ResponseEntity<Page<NoteMovieModel>> getAllNoteMovies(@PageableDefault(
             page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-
         return ResponseEntity.status(HttpStatus.OK).body(noteMovieService.findAll(pageable));
-
     }
 
     @GetMapping("/{id}")
@@ -51,29 +46,13 @@ public class NoteMovieController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<Object> deleteNoteMovie(@PathVariable(value = "id") UUID id) {
-        Optional<NoteMovieModel> noteMovieModelOptional = noteMovieService.findById(id);
-        if (!noteMovieModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movie/Serie not found!!!");
-        }
-        noteMovieService.delete(noteMovieModelOptional.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Movie/Serie deleted succesfully!!!");
+    private ResponseEntity<String> deleteNoteMovie(@PathVariable(value = "id") UUID id) {
+        return noteMovieService.delete(id);
     }
 
     @PutMapping
-    private ResponseEntity<Object> updateNoteMovie(@PathVariable(value = "id") UUID id,
-                                                    @RequestBody @Valid NoteMoviesRequest noteMoviesDto) {
-
-        Optional<NoteMovieModel> noteMovieModelOptional = noteMovieService.findById(id);
-        if (!noteMovieModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movie/Serie not found!!!");
-        }
-
-        var noteMovieModel = new NoteMovieModel();
-            BeanUtils.copyProperties(noteMoviesDto, noteMovieModel);
-            noteMovieModel.setId(noteMovieModelOptional.get().getId());
-            noteMovieModel.setRegistrationDate(noteMovieModelOptional.get().getRegistrationDate());
-            return ResponseEntity.status(HttpStatus.OK).body(noteMovieService.save(noteMovieModel));
+    private ResponseEntity<NoteMovieResponse> updateNoteMovie(@PathVariable(value = "id") UUID id,
+                                                              @RequestBody @Valid NoteMoviesRequest noteMoviesRequest) {
+        return ResponseEntity.ok(noteMovieService.updateNoteMovies(noteMoviesRequest, id));
     }
-
 }
