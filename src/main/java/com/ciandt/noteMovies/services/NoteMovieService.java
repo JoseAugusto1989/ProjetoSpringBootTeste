@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,10 +27,11 @@ public class NoteMovieService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public NoteMovieResponse save(NoteMoviesRequest noteMoviesRequest, UUID id) {
-        var noteMovieModel = getMovieById(id);
+    public NoteMovieResponse save(NoteMoviesRequest noteMoviesRequest) {
+        NoteMovieModel noteMovieModel = new NoteMovieModel();
         NoteMovieResponse noteMovieResponse = new NoteMovieResponse();
         modelMapper.map(noteMoviesRequest, noteMovieModel);
+        noteMovieModel.setRegistrationDate(LocalDateTime.now());
         noteMoviesRepository.save(noteMovieModel);
         modelMapper.map(noteMovieModel, noteMovieResponse);
         return noteMovieResponse;
@@ -46,8 +48,11 @@ public class NoteMovieService {
         return noteMoviesRepository.findAll(pageable);
     }
 
-    public Optional<NoteMovieModel> findById(UUID id) {
-        return noteMoviesRepository.findById(id);
+    public NoteMovieResponse findById(UUID id) {
+        var noteMovieModel = getMovieById(id);
+        NoteMovieResponse noteMovieResponse = new NoteMovieResponse();
+        modelMapper.map(noteMovieModel, noteMovieResponse);
+        return noteMovieResponse;
     }
 
     public NoteMovieResponse updateNoteMovies(NoteMoviesRequest noteMoviesRequest, UUID id) {

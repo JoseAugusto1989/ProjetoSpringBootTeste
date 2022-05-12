@@ -3,6 +3,7 @@ package com.ciandt.noteMovies.requests;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class NoteMoviesRequest {
@@ -13,10 +14,10 @@ public class NoteMoviesRequest {
     @NotBlank
     private String genre;
 
-    @NotBlank
+    @NotNull
     private double note;
 
-    @NotBlank
+    @NotNull
     private double noteIMDB;
 
     @NotBlank

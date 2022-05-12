@@ -4,7 +4,9 @@ import com.ciandt.noteMovies.requests.NoteMoviesRequest;
 import com.ciandt.noteMovies.models.NoteMovieModel;
 import com.ciandt.noteMovies.responses.NoteMovieResponse;
 import com.ciandt.noteMovies.services.NoteMovieService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -25,8 +26,8 @@ public class NoteMovieController {
     private NoteMovieService noteMovieService;
 
     @PostMapping
-    private ResponseEntity<NoteMovieResponse> saveNoteMovie(@Valid NoteMoviesRequest noteMoviesRequest, UUID id) {
-        return ResponseEntity.ok(noteMovieService.save(noteMoviesRequest, id));
+    private ResponseEntity<NoteMovieResponse> saveNoteMovie(@Valid @RequestBody NoteMoviesRequest noteMoviesRequest) {
+        return ResponseEntity.ok(noteMovieService.save(noteMoviesRequest));
     }
 
     @GetMapping
@@ -36,13 +37,8 @@ public class NoteMovieController {
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<Object> getOneNoteMovie(@PathVariable(value = "id") UUID id) {
-        Optional<NoteMovieModel> noteMovieModelOptional = noteMovieService.findById(id);
-        if (!noteMovieModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body("Movie/Serie not found!!!");
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(noteMovieModelOptional.get());
+    private ResponseEntity<NoteMovieResponse> getOneNoteMovie(@PathVariable(value = "id") UUID id) {
+        return ResponseEntity.ok(noteMovieService.findById(id));
     }
 
     @DeleteMapping("/{id}")
